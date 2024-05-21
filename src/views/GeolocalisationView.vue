@@ -8,10 +8,7 @@
   
 </template>
 
-<script>
+<script setup>
 import ComposantGeo from '@/components/ComposantGeo.vue'
 
-export default {
-  name: 'geolocalisation',
-}
 </script>

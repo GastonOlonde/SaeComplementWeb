@@ -1,15 +1,11 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-// import HelloWorld from './components/HelloWorld.vue'
+
 </script>
 
 <template>
   <header>
-    <!-- <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" /> -->
-
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
       <nav>
         <RouterLink to="/">Accueil</RouterLink>
         <RouterLink to="/geolocalisation">geolocalisation</RouterLink>
@@ -23,19 +19,19 @@ import { RouterLink, RouterView } from 'vue-router'
 </template>
 
 <style scoped>
+body {
+  margin: 0;
+  padding: 0;
+}
+
 header {
   line-height: 1.5;
   max-height: 100vh;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
 nav {
   width: 100%;
-  font-size: 12px;
+  font-size: 1.2rem;
   text-align: center;
   margin-top: 2rem;
 }
@@ -58,7 +54,7 @@ nav a:first-of-type {
   border: 0;
 }
 
-@media (min-width: 1024px) {
+/* @media (min-width: 1024px) {
   header {
     display: flex;
     place-items: center;
@@ -83,5 +79,5 @@ nav a:first-of-type {
     padding: 1rem 0;
     margin-top: 1rem;
   }
-}
+} */
 </style>
