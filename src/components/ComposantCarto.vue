@@ -37,7 +37,7 @@ export default {
             .addTo(map.value)
             .bindPopup('Vous êtes ici')
             .openPopup();
-
+          //centrer
         }, (error) => {
           console.error(error);
         });
@@ -45,6 +45,8 @@ export default {
         console.error('Geolocation is not supported by this browser.');
       }
     };
+
+    
 
     return {
       centerMap
@@ -57,7 +59,7 @@ export default {
 
 <style scoped>
 #map { 
-  height: 80vh;
+  height: 60vh;
   width: 80%;
   margin: 0 auto;
 }

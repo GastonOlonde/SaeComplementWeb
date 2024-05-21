@@ -22,18 +22,34 @@ import { RouterLink, RouterView } from 'vue-router'
 body {
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
 }
 
 header {
   line-height: 1.5;
-  max-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: black;
+  height: 100vh;
+  width: auto; 
+  z-index: 1000;
+}
+
+.wrapper {
+  height: 50%;
+  margin: 22vh 1rem 0 1rem;
 }
 
 nav {
   width: 100%;
+  height: 100%;
   font-size: 1.2rem;
-  text-align: center;
-  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 nav a.router-link-exact-active {

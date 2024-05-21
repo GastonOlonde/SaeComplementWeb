@@ -12,7 +12,9 @@
     "axios": "^1.7.1",
     "leaflet": "^1.9.4",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "vue-leaflet": "^0.1.0",
+    "vue-router": "^4.3.0",
+    "vue3-leaflet": "^1.0.48"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
