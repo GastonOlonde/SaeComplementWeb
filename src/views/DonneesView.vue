@@ -1,9 +1,11 @@
 <template>
   <h1>Accès données</h1>
+  <ComposantRecupPosition/>
+  
 </template>
 
-<script>
-export default {
-  name: 'DonneesView',
-}
+<script setup>
+
+import ComposantRecupPosition from '@/components/ComposantRecupPosition.vue'
+
 </script>
