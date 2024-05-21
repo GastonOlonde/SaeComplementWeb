@@ -3,6 +3,7 @@ import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template>
+  
   <header>
     <div class="wrapper">
       <nav>
@@ -51,6 +52,9 @@ nav a {
 nav a:first-of-type {
   border: 0;
 }
+
+
+
 
 /* @media (min-width: 1024px) {
   header {

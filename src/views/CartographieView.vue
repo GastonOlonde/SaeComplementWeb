@@ -1,11 +1,9 @@
 <template>
   <div>
-    <h1>Cartographie</h1>
+    <ComposantCarto />
   </div>
 </template>
 
-<script>
-export default {
-  name: 'CartographieView',
-}
+<script setup>
+import ComposantCarto from '@/components/ComposantCarto.vue'
 </script>
