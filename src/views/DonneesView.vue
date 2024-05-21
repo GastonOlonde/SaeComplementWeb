@@ -1,5 +1,5 @@
 <template>
-  <h1>données vue</h1>
+  <h1>Accès données</h1>
 </template>
 
 <script>

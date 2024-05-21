@@ -1,7 +1,7 @@
 
 <template>
   <div>
-    <h1>Geolocalisation</h1>
+    <h1>Géolocalisation</h1>
     <p></p>
   </div>
   <ComposantGeo />

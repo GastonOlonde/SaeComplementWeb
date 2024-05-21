@@ -3,11 +3,9 @@
   <p>
     Compteur : {{ count }}
   </p>
-  <p>
-    <button 
-      @click="handleClick">Incrémenter
-    </button>
-  </p>
+  <button 
+    @click="handleClick">Incrémenter
+  </button>
 </template>
 
 <script setup>

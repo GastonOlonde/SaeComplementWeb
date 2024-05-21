@@ -8,8 +8,8 @@ import { RouterLink, RouterView } from 'vue-router'
     <div class="wrapper">
       <nav>
         <RouterLink to="/">Accueil</RouterLink>
-        <RouterLink to="/geolocalisation">geolocalisation</RouterLink>
-        <RouterLink to="/cartographie">catographie</RouterLink>
+        <RouterLink to="/geolocalisation">Géolocalisation</RouterLink>
+        <RouterLink to="/cartographie">Cartographie</RouterLink>
         <RouterLink to="/donnees">Accéder aux données</RouterLink>
       </nav>
     </div>
@@ -33,13 +33,12 @@ nav {
   width: 100%;
   font-size: 1.2rem;
   text-align: center;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 nav a.router-link-exact-active {
   color: var(--color-text);
 }
-
 nav a.router-link-exact-active:hover {
   background-color: transparent;
 }
