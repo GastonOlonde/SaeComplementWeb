@@ -1,7 +1,6 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 // import HelloWorld from './components/HelloWorld.vue'
-
 </script>
 
 <template>
@@ -13,8 +12,8 @@ import { RouterLink, RouterView } from 'vue-router'
 
       <nav>
         <RouterLink to="/">Accueil</RouterLink>
-        <RouterLink to="/geolocalisaion">geolocalisaion</RouterLink>
-        <RouterLink to="/catographie">catographie</RouterLink>
+        <RouterLink to="/geolocalisation">geolocalisation</RouterLink>
+        <RouterLink to="/cartographie">catographie</RouterLink>
         <RouterLink to="/donnees">Accéder aux données</RouterLink>
       </nav>
     </div>
