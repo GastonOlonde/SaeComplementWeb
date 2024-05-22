@@ -35,8 +35,8 @@ export default {
       map.value.addLayer(markers.value);
 
       // Ajouter les écouteurs d'événements
-      map.value.on('moveend', throttle(loadMarkers, 5000)); // Throttle les requêtes
-      map.value.on('zoomend', throttle(loadMarkers, 5000)); // Throttle les requêtes
+      map.value.on('moveend', throttle(loadMarkers, 3000)); // Throttle les requêtes
+      map.value.on('zoomend', throttle(loadMarkers, 3000)); // Throttle les requêtes
 
       // Charger les marqueurs initiaux
       loadMarkers();
