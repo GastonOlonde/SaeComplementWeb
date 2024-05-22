@@ -26,12 +26,17 @@ export default {
       }).addTo(map.value);
 
       // Initialiser le groupe de clusters
-      markers.value = L.markerClusterGroup();
+      markers.value = L.markerClusterGroup(
+        {
+          disableClusteringAtZoom: 16, // Désactiver le clustering à partir du niveau de zoom 16
+          maxClusterRadius: 50, // Rayon maximum du cluster en pixels
+        }
+      );
       map.value.addLayer(markers.value);
 
       // Ajouter les écouteurs d'événements
-      map.value.on('moveend', loadMarkers);
-      map.value.on('zoomend', loadMarkers);
+      map.value.on('moveend', throttle(loadMarkers, 5000)); // Throttle les requêtes
+      map.value.on('zoomend', throttle(loadMarkers, 5000)); // Throttle les requêtes
 
       // Charger les marqueurs initiaux
       loadMarkers();
@@ -79,49 +84,67 @@ export default {
       }
     };
 
-    const loadMarkers = async () => {
-      if (map.value) {
-        const bounds = map.value.getBounds();
-        const northEast = bounds.getNorthEast();
-        const southWest = bounds.getSouthWest();
-        const minLat = southWest.lat;
-        const maxLat = northEast.lat;
-        const minLng = southWest.lng;
-        const maxLng = northEast.lng;
+    const loadedMarkers = ref(new Set());
 
-        const baseUrl = `http://localhost:1337/api/saes?filters[X][$lte]=${maxLng}&filters[X][$gte]=${minLng}&filters[$and][0][Y][$lte]=${maxLat}&filters[$and][0][Y][$gte]=${minLat}`;
-        const firstRequest = `${baseUrl}&pagination[page]=1&pagination[pageSize]=100`;
+const loadMarkers = async () => {
+  if (map.value) {
+    const bounds = map.value.getBounds();
+    const northEast = bounds.getNorthEast();
+    const southWest = bounds.getSouthWest();
+    const minLat = southWest.lat;
+    const maxLat = northEast.lat;
+    const minLng = southWest.lng;
+    const maxLng = northEast.lng;
 
-        try {
-          const response = await axios.get(firstRequest);
-          const totalPages = response.data.meta.pagination.pageCount;
+    const baseUrl = `http://localhost:1337/api/saes?filters[X][$lte]=${maxLng}&filters[X][$gte]=${minLng}&filters[$and][0][Y][$lte]=${maxLat}&filters[$and][0][Y][$gte]=${minLat}`;
+    const firstRequest = `${baseUrl}&pagination[page]=1&pagination[pageSize]=100`;
 
-          // Effacer les anciens marqueurs avant de charger les nouveaux
-          clearMarkers();
+    try {
+      const response = await axios.get(firstRequest);
+      const totalPages = response.data.meta.pagination.pageCount;
 
-          // Ajouter le premier lot de marqueurs
-          response.data.data.forEach(item => {
-            const lng = item.attributes.X;
-            const lat = item.attributes.Y;
-            const id = item.id;
-            addMarker(lat, lng, `Element ID: ${id} Lat : ${lat} Lng : ${lng}`, id);
-          });
-
-          // Charger les pages supplémentaires si nécessaire
-          for (let page = 2; page <= totalPages; page++) {
-            const url = `${baseUrl}&pagination[page]=${page}&pagination[pageSize]=100`;
-            const additionalResponse = await axios.get(url);
-            additionalResponse.data.data.forEach(item => {
-              const lng = item.attributes.X;
-              const lat = item.attributes.Y;
-              const id = item.id;
-              addMarker(lat, lng, `Element ID: ${id} Lat : ${lat} Lng : ${lng}`, id);
-            });
-          }
-        } catch (error) {
-          console.error('Erreur lors de la récupération des éléments de l\'API:', error);
+      // Ajouter le premier lot de marqueurs
+      response.data.data.forEach(item => {
+        const lng = item.attributes.X;
+        const lat = item.attributes.Y;
+        const id = item.id;
+        if (!loadedMarkers.value.has(id)) {
+          addMarker(lat, lng, `Element ID: ${id} Lat : ${lat} Lng : ${lng}`, id);
+          loadedMarkers.value.add(id);
         }
+      });
+
+      // Charger les pages supplémentaires si nécessaire
+      for (let page = 2; page <= totalPages; page++) {
+        const url = `${baseUrl}&pagination[page]=${page}&pagination[pageSize]=100`;
+        const additionalResponse = await axios.get(url);
+        additionalResponse.data.data.forEach(item => {
+          const lng = item.attributes.X;
+          const lat = item.attributes.Y;
+          const id = item.id;
+          if (!loadedMarkers.value.has(id)) {
+            addMarker(lat, lng, `Element ID: ${id} Lat : ${lat} Lng : ${lng}`, id);
+            loadedMarkers.value.add(id);
+          }
+        });
       }
+    } catch (error) {
+      console.error('Erreur lors de la récupération des éléments de l\'API:', error);
+    }
+  }
+};
+
+
+    const throttle = (func, delay) => {
+      let lastCall = 0;
+      return function (...args) {
+        const now = (new Date).getTime();
+        if (now - lastCall < delay) {
+          return;
+        }
+        lastCall = now;
+        return func(...args);
+      };
     };
 
     return {
