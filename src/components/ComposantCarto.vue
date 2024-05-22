@@ -18,6 +18,7 @@ export default {
     const map = ref(null);
     const markers = ref(null);
     const markerIds = ref(new Set());
+    const routeLayer = ref(null);
 
     onMounted(() => {
       map.value = L.map('map').setView([48.8534, 2.3488], 12);
@@ -28,8 +29,8 @@ export default {
       // Initialiser le groupe de clusters
       markers.value = L.markerClusterGroup(
         {
-          disableClusteringAtZoom: 16, // Désactiver le clustering à partir du niveau de zoom 16
-          maxClusterRadius: 50, // Rayon maximum du cluster en pixels
+          disableClusteringAtZoom: 20, // Désactiver le clustering à partir du niveau de zoom 16
+          maxClusterRadius: 70, // Rayon maximum du cluster en pixels
         }
       );
       map.value.addLayer(markers.value);
@@ -76,7 +77,10 @@ export default {
 
     const addMarker = (lat, lng, popupText, id = null) => {
       if (markers.value && (id === null || !markerIds.value.has(id))) {
-        const marker = L.marker([lat, lng]).bindPopup(popupText);
+        const marker = L.marker([lat, lng]).bindPopup(`
+          ${popupText}<br>
+          <button onclick="getItinerary(${lat}, ${lng})">Itinéraire</button>
+        `);
         markers.value.addLayer(marker);
         if (id !== null) {
           markerIds.value.add(id);
@@ -109,6 +113,7 @@ const loadMarkers = async () => {
         const lat = item.attributes.Y;
         const id = item.id;
         if (!loadedMarkers.value.has(id)) {
+          // ajouter un bouton itinéraire pour chaque marqueur
           addMarker(lat, lng, `Element ID: ${id} Lat : ${lat} Lng : ${lng}`, id);
           loadedMarkers.value.add(id);
         }
@@ -146,6 +151,36 @@ const loadMarkers = async () => {
         return func(...args);
       };
     };
+
+    const getItinerary = (lat, lng) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          const { latitude: userLat, longitude: userLng } = position.coords;
+
+          const routeUrl = `https://router.project-osrm.org/route/v1/driving/${userLng},${userLat};${lng},${lat}?overview=full&geometries=geojson`;
+
+          try {
+            const response = await axios.get(routeUrl);
+            const route = response.data.routes[0].geometry;
+
+            if (routeLayer.value) {
+              map.value.removeLayer(routeLayer.value);
+            }
+
+            routeLayer.value = L.geoJSON(route).addTo(map.value);
+            map.value.fitBounds(routeLayer.value.getBounds());
+          } catch (error) {
+            console.error('Erreur lors de la récupération de l\'itinéraire:', error);
+          }
+        }, (error) => {
+          console.error(error);
+        });
+      } else {
+        console.error('Geolocation is not supported by this browser.');
+      }
+    };
+
+    window.getItinerary = getItinerary;
 
     return {
       centerMap
