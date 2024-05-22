@@ -98,7 +98,7 @@ export default {
             const lng = item.attributes.X;
             const lat = item.attributes.Y;
             const id = item.id;
-            addMarker(lat, lng, `Element ID: ${id}`, id);
+            addMarker(lat, lng, `Element ID: ${id} Lat : ${lat} Lng : ${lng}`, id);
           });
 
           // Load additional pages if necessary
@@ -109,7 +109,7 @@ export default {
               const lng = item.attributes.X;
               const lat = item.attributes.Y;
               const id = item.id;
-              addMarker(lng, lat, `Element ID: ${id}`, id);
+              addMarker(lng, lat, `Element ID: ${id} Lat : ${lat} Lng : ${lng}`, id);
             });
           }
         } catch (error) {
