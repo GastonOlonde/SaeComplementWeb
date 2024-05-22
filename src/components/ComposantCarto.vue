@@ -109,7 +109,7 @@ export default {
               const lng = item.attributes.X;
               const lat = item.attributes.Y;
               const id = item.id;
-              addMarker(lng, lat, `Element ID: ${id} Lat : ${lat} Lng : ${lng}`, id);
+              addMarker(lat, lng, `Element ID: ${id} Lat : ${lat} Lng : ${lng}`, id);
             });
           }
         } catch (error) {
