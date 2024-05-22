@@ -95,8 +95,8 @@ export default {
 
           // Add initial batch of markers
           response.data.data.forEach(item => {
-            const lat = item.attributes.X;
-            const lng = item.attributes.Y;
+            const lng = item.attributes.X;
+            const lat = item.attributes.Y;
             const id = item.id;
             addMarker(lat, lng, `Element ID: ${id}`, id);
           });
@@ -106,8 +106,8 @@ export default {
             const url = `${baseUrl}&pagination[page]=${page}&pagination[pageSize]=100`;
             const additionalResponse = await axios.get(url);
             additionalResponse.data.data.forEach(item => {
-              const lat = item.attributes.X;
-              const lng = item.attributes.Y;
+              const lng = item.attributes.X;
+              const lat = item.attributes.Y;
               const id = item.id;
               addMarker(lng, lat, `Element ID: ${id}`, id);
             });
