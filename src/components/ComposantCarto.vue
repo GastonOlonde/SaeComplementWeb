@@ -7,12 +7,16 @@
 <script>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import L from 'leaflet';
+import 'leaflet.markercluster/dist/leaflet.markercluster'; // Importer le plugin de clustering
+import 'leaflet/dist/leaflet.css'; // Importer les styles de Leaflet
+import 'leaflet.markercluster/dist/MarkerCluster.css'; // Importer les styles du cluster
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'; // Importer les styles par défaut du cluster
 import axios from 'axios';
 
 export default {
   setup() {
     const map = ref(null);
-    const markers = ref([]);
+    const markers = ref(null);
     const markerIds = ref(new Set());
 
     onMounted(() => {
@@ -21,7 +25,11 @@ export default {
         attribution: '© OpenStreetMap contributors'
       }).addTo(map.value);
 
-      // Ajout des écouteurs d'événements
+      // Initialiser le groupe de clusters
+      markers.value = L.markerClusterGroup();
+      map.value.addLayer(markers.value);
+
+      // Ajouter les écouteurs d'événements
       map.value.on('moveend', loadMarkers);
       map.value.on('zoomend', loadMarkers);
 
@@ -55,21 +63,16 @@ export default {
     };
 
     const clearMarkers = () => {
-      if (map.value) {
-        markers.value.forEach(marker => {
-          map.value.removeLayer(marker);
-        });
-        markers.value = [];
+      if (markers.value) {
+        markers.value.clearLayers();
         markerIds.value.clear();
       }
     };
 
     const addMarker = (lat, lng, popupText, id = null) => {
-      if (map.value && (id === null || !markerIds.value.has(id))) {
-        const marker = L.marker([lat, lng])
-          .addTo(map.value)
-          .bindPopup(popupText);
-        markers.value.push(marker);
+      if (markers.value && (id === null || !markerIds.value.has(id))) {
+        const marker = L.marker([lat, lng]).bindPopup(popupText);
+        markers.value.addLayer(marker);
         if (id !== null) {
           markerIds.value.add(id);
         }
@@ -93,7 +96,10 @@ export default {
           const response = await axios.get(firstRequest);
           const totalPages = response.data.meta.pagination.pageCount;
 
-          // Add initial batch of markers
+          // Effacer les anciens marqueurs avant de charger les nouveaux
+          clearMarkers();
+
+          // Ajouter le premier lot de marqueurs
           response.data.data.forEach(item => {
             const lng = item.attributes.X;
             const lat = item.attributes.Y;
@@ -101,7 +107,7 @@ export default {
             addMarker(lat, lng, `Element ID: ${id} Lat : ${lat} Lng : ${lng}`, id);
           });
 
-          // Load additional pages if necessary
+          // Charger les pages supplémentaires si nécessaire
           for (let page = 2; page <= totalPages; page++) {
             const url = `${baseUrl}&pagination[page]=${page}&pagination[pageSize]=100`;
             const additionalResponse = await axios.get(url);
