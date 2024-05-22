@@ -22,6 +22,7 @@ export default {
 
     onMounted(() => {
       map.value = L.map('map').setView([48.8534, 2.3488], 12);
+
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
       }).addTo(map.value);
@@ -75,12 +76,22 @@ export default {
       }
     };
 
-    const addMarker = (lat, lng, popupText, id = null) => {
+
+
+    const addMarker = async (lat, lng, popupText, id = null) => {
       if (markers.value && (id === null || !markerIds.value.has(id))) {
-        const marker = L.marker([lat, lng]).bindPopup(`
-          ${popupText}<br>
+        const marker = L.marker([lat, lng]);
+        marker.bindPopup(`
+      <button onclick="getItinerary(${lat}, ${lng})">Itinéraire</button>
+    `);
+        marker.on('click', async (e) => {
+          const { lat, lng } = e.latlng;
+          const address = await getGeocodingData(lat, lng);
+          marker.bindPopup(`
+          ${address}<br>
           <button onclick="getItinerary(${lat}, ${lng})">Itinéraire</button>
-        `);
+      `).openPopup();
+        });
         markers.value.addLayer(marker);
         if (id !== null) {
           markerIds.value.add(id);
@@ -88,56 +99,74 @@ export default {
       }
     };
 
+    const getGeocodingData = (lat, lng) => {
+      return new Promise((resolve, reject) => {
+        const apiUrl = `https://api.opencagedata.com/geocode/v1/json?q=${lat}%2C${lng}&key=fb0f32f0d7984466b39ed240f169d182`;
+        axios.get(apiUrl)
+          .then(response => {
+            if (response.data && response.data.results && response.data.results.length > 0) {
+              resolve(response.data.results[0].formatted);
+            } else {
+              resolve('Adresse non trouvée');
+            }
+          })
+          .catch(error => {
+            reject(error);
+          });
+      });
+    };
+
+
     const loadedMarkers = ref(new Set());
 
-const loadMarkers = async () => {
-  if (map.value) {
-    const bounds = map.value.getBounds();
-    const northEast = bounds.getNorthEast();
-    const southWest = bounds.getSouthWest();
-    const minLat = southWest.lat;
-    const maxLat = northEast.lat;
-    const minLng = southWest.lng;
-    const maxLng = northEast.lng;
+    const loadMarkers = async () => {
+      if (map.value) {
+        const bounds = map.value.getBounds();
+        const northEast = bounds.getNorthEast();
+        const southWest = bounds.getSouthWest();
+        const minLat = southWest.lat;
+        const maxLat = northEast.lat;
+        const minLng = southWest.lng;
+        const maxLng = northEast.lng;
 
-    const baseUrl = `http://localhost:1337/api/saes?filters[X][$lte]=${maxLng}&filters[X][$gte]=${minLng}&filters[$and][0][Y][$lte]=${maxLat}&filters[$and][0][Y][$gte]=${minLat}`;
-    const firstRequest = `${baseUrl}&pagination[page]=1&pagination[pageSize]=100`;
+        const baseUrl = `http://localhost:1337/api/saes?filters[X][$lte]=${maxLng}&filters[X][$gte]=${minLng}&filters[$and][0][Y][$lte]=${maxLat}&filters[$and][0][Y][$gte]=${minLat}`;
+        const firstRequest = `${baseUrl}&pagination[page]=1&pagination[pageSize]=100`;
 
-    try {
-      const response = await axios.get(firstRequest);
-      const totalPages = response.data.meta.pagination.pageCount;
+        try {
+          const response = await axios.get(firstRequest);
+          const totalPages = response.data.meta.pagination.pageCount;
 
-      // Ajouter le premier lot de marqueurs
-      response.data.data.forEach(item => {
-        const lng = item.attributes.X;
-        const lat = item.attributes.Y;
-        const id = item.id;
-        if (!loadedMarkers.value.has(id)) {
-          // ajouter un bouton itinéraire pour chaque marqueur
-          addMarker(lat, lng, `Element ID: ${id} Lat : ${lat} Lng : ${lng}`, id);
-          loadedMarkers.value.add(id);
-        }
-      });
+          // Ajouter le premier lot de marqueurs
+          response.data.data.forEach(item => {
+            const lng = item.attributes.X;
+            const lat = item.attributes.Y;
+            const id = item.id;
+            if (!loadedMarkers.value.has(id)) {
+              // ajouter un bouton itinéraire pour chaque marqueur
+              addMarker(lat, lng, `Element ID: ${id} Lat : ${lat} Lng : ${lng}`, id);
+              loadedMarkers.value.add(id);
+            }
+          });
 
-      // Charger les pages supplémentaires si nécessaire
-      for (let page = 2; page <= totalPages; page++) {
-        const url = `${baseUrl}&pagination[page]=${page}&pagination[pageSize]=100`;
-        const additionalResponse = await axios.get(url);
-        additionalResponse.data.data.forEach(item => {
-          const lng = item.attributes.X;
-          const lat = item.attributes.Y;
-          const id = item.id;
-          if (!loadedMarkers.value.has(id)) {
-            addMarker(lat, lng, `Element ID: ${id} Lat : ${lat} Lng : ${lng}`, id);
-            loadedMarkers.value.add(id);
+          // Charger les pages supplémentaires si nécessaire
+          for (let page = 2; page <= totalPages; page++) {
+            const url = `${baseUrl}&pagination[page]=${page}&pagination[pageSize]=100`;
+            const additionalResponse = await axios.get(url);
+            additionalResponse.data.data.forEach(item => {
+              const lng = item.attributes.X;
+              const lat = item.attributes.Y;
+              const id = item.id;
+              if (!loadedMarkers.value.has(id)) {
+                addMarker(lat, lng, `Element ID: ${id} Lat : ${lat} Lng : ${lng}`, id);
+                loadedMarkers.value.add(id);
+              }
+            });
           }
-        });
+        } catch (error) {
+          console.error('Erreur lors de la récupération des éléments de l\'API:', error);
+        }
       }
-    } catch (error) {
-      console.error('Erreur lors de la récupération des éléments de l\'API:', error);
-    }
-  }
-};
+    };
 
 
     const throttle = (func, delay) => {
@@ -190,7 +219,7 @@ const loadMarkers = async () => {
 </script>
 
 <style scoped>
-#map { 
+#map {
   height: 60vh;
   width: 80%;
   margin: 0 auto;
