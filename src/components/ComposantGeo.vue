@@ -1,9 +1,9 @@
 <template>
   <div>
-    <button @click="loadMore">Load More</button>
+    <!-- <button @click="loadMore">Load More</button>
     <div v-for="item in extractedData" :key="item.id">
       <p> {{ item.id }} [ {{ item.X }} , {{ item.Y }} ]</p>
-    </div>
+    </div> -->
   </div>
 </template>
 

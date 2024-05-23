@@ -1,16 +1,23 @@
 <template>
   <h1>Cartographie</h1>
   <div id="map"></div>
-  <button @click="centerMap">Centrer sur moi</button>
+  <div id="div_options">
+    <button id="center_me" @click="centerMap">Centrer sur moi</button>
+    <div id="research">
+      <input id="search_input" type="text" v-model="searchQuery" placeholder="Entrez une adresse ou des coordonnées">
+      <button id="search_button" @click="searchLocation">Rechercher</button>
+    </div>
+  </div>
+  
 </template>
 
 <script>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import L from 'leaflet';
-import 'leaflet.markercluster/dist/leaflet.markercluster'; // Importer le plugin de clustering
-import 'leaflet/dist/leaflet.css'; // Importer les styles de Leaflet
-import 'leaflet.markercluster/dist/MarkerCluster.css'; // Importer les styles du cluster
-import 'leaflet.markercluster/dist/MarkerCluster.Default.css'; // Importer les styles par défaut du cluster
+import 'leaflet.markercluster/dist/leaflet.markercluster';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import axios from 'axios';
 
 export default {
@@ -19,6 +26,23 @@ export default {
     const markers = ref(null);
     const markerIds = ref(new Set());
     const routeLayer = ref(null);
+    const userMarker = ref(null);
+    const searchQuery = ref('');
+    const searchMarker = ref(null);
+
+    const userIcon = L.icon({
+      iconUrl: '/position_red.png',
+      iconSize: [70, 70],
+      iconAnchor: [19, 38],
+      popupAnchor: [15, -15]
+    });
+
+    const searchIcon = L.icon({
+      iconUrl: '/position_green.png',
+      iconSize: [70, 70],
+      iconAnchor: [19, 38],
+      popupAnchor: [15, -15]
+    });
 
     onMounted(() => {
       map.value = L.map('map').setView([48.8534, 2.3488], 12);
@@ -27,20 +51,15 @@ export default {
         attribution: '© OpenStreetMap contributors'
       }).addTo(map.value);
 
-      // Initialiser le groupe de clusters
-      markers.value = L.markerClusterGroup(
-        {
-          disableClusteringAtZoom: 20, // Désactiver le clustering à partir du niveau de zoom 16
-          maxClusterRadius: 70, // Rayon maximum du cluster en pixels
-        }
-      );
+      markers.value = L.markerClusterGroup({
+        disableClusteringAtZoom: 20,
+        maxClusterRadius: 70,
+      });
       map.value.addLayer(markers.value);
 
-      // Ajouter les écouteurs d'événements
-      map.value.on('moveend', throttle(loadMarkers, 3000)); // Throttle les requêtes
-      map.value.on('zoomend', throttle(loadMarkers, 3000)); // Throttle les requêtes
+      map.value.on('moveend', throttle(loadMarkers, 3000));
+      map.value.on('zoomend', throttle(loadMarkers, 3000));
 
-      // Charger les marqueurs initiaux
       loadMarkers();
     });
 
@@ -59,7 +78,17 @@ export default {
           const { latitude, longitude } = position.coords;
           if (map.value) {
             map.value.setView([latitude, longitude], 12);
-            addMarker(latitude, longitude, 'Vous êtes ici');
+
+            if (userMarker.value) {
+              userMarker.value.setLatLng([latitude, longitude]);
+            } else {
+              userMarker.value = L.marker([latitude, longitude], { icon: userIcon }).addTo(map.value);
+              userMarker.value.on('click', async (e) => {
+                const { lat, lng } = e.latlng;
+                const address = await getGeocodingData(lat, lng);
+                userMarker.value.bindPopup(`${address}`).openPopup();
+              });
+            }
           }
         }, (error) => {
           console.error(error);
@@ -76,21 +105,19 @@ export default {
       }
     };
 
-
-
     const addMarker = async (lat, lng, popupText, id = null) => {
       if (markers.value && (id === null || !markerIds.value.has(id))) {
         const marker = L.marker([lat, lng]);
         marker.bindPopup(`
-      <button onclick="getItinerary(${lat}, ${lng})">Itinéraire</button>
-    `);
+          <button onclick="getItinerary(${lat}, ${lng})">Itinéraire</button>
+        `);
         marker.on('click', async (e) => {
           const { lat, lng } = e.latlng;
           const address = await getGeocodingData(lat, lng);
           marker.bindPopup(`
-          ${address}<br>
-          <button onclick="getItinerary(${lat}, ${lng})">Itinéraire</button>
-      `).openPopup();
+            ${address}<br>
+            <button onclick="getItinerary(${lat}, ${lng})">Itinéraire</button>
+          `).openPopup();
         });
         markers.value.addLayer(marker);
         if (id !== null) {
@@ -116,7 +143,6 @@ export default {
       });
     };
 
-
     const loadedMarkers = ref(new Set());
 
     const loadMarkers = async () => {
@@ -136,19 +162,16 @@ export default {
           const response = await axios.get(firstRequest);
           const totalPages = response.data.meta.pagination.pageCount;
 
-          // Ajouter le premier lot de marqueurs
           response.data.data.forEach(item => {
             const lng = item.attributes.X;
             const lat = item.attributes.Y;
             const id = item.id;
             if (!loadedMarkers.value.has(id)) {
-              // ajouter un bouton itinéraire pour chaque marqueur
               addMarker(lat, lng, `Element ID: ${id} Lat : ${lat} Lng : ${lng}`, id);
               loadedMarkers.value.add(id);
             }
           });
 
-          // Charger les pages supplémentaires si nécessaire
           for (let page = 2; page <= totalPages; page++) {
             const url = `${baseUrl}&pagination[page]=${page}&pagination[pageSize]=100`;
             const additionalResponse = await axios.get(url);
@@ -167,7 +190,6 @@ export default {
         }
       }
     };
-
 
     const throttle = (func, delay) => {
       let lastCall = 0;
@@ -209,19 +231,112 @@ export default {
       }
     };
 
+    const searchLocation = async () => {
+      const query = searchQuery.value;
+      if (!query) return;
+
+      // Check if the query is coordinates
+      const coordRegex = /^[-+]?\d{1,2}\.\d+,\s*[-+]?\d{1,3}\.\d+$/;
+      if (coordRegex.test(query)) {
+        const [lat, lng] = query.split(',').map(Number);
+        if (map.value) {
+          if (searchMarker.value) {
+            searchMarker.value.setLatLng([lat, lng]);
+          } else {
+            searchMarker.value = L.marker([lat, lng], { icon: searchIcon }).addTo(map.value);
+          }
+          map.value.setView([lat, lng], 12);
+          const address = await getGeocodingData(lat, lng);
+          searchMarker.value.bindPopup(`${address}`).openPopup();
+        }
+      } else {
+        // Geocode the address
+        const apiUrl = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(query)}&key=fb0f32f0d7984466b39ed240f169d182`;
+        try {
+          const response = await axios.get(apiUrl);
+          if (response.data && response.data.results && response.data.results.length > 0) {
+            const { lat, lng } = response.data.results[0].geometry;
+            if (map.value) {
+              if (searchMarker.value) {
+                searchMarker.value.setLatLng([lat, lng]);
+              } else {
+                searchMarker.value = L.marker([lat, lng], { icon: searchIcon }).addTo(map.value);
+              }
+              map.value.setView([lat, lng], 12);
+              const address = response.data.results[0].formatted;
+              searchMarker.value.bindPopup(`${address}
+              <br>
+              <button onclick="getItinerary(${lat}, ${lng})">Itinéraire</button>
+              `).openPopup();
+            }
+          } else {
+            alert('Adresse non trouvée');
+          }
+        } catch (error) {
+          console.error('Erreur lors de la recherche de l\'adresse:', error);
+        }
+      }
+    };
+
     window.getItinerary = getItinerary;
 
     return {
-      centerMap
+      centerMap,
+      searchQuery,
+      searchLocation
     };
   }
 };
 </script>
 
 <style scoped>
-#map {
-  height: 60vh;
-  width: 80%;
-  margin: 0 auto;
-}
+  #map {
+    height: 60vh;
+    width: 80%;
+    margin: 0 auto;
+  }
+
+  button {
+    padding: 0.5rem 1rem;
+    background-color: #107231;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #0d5f1f;
+  }
+
+  input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+  }
+
+  #div_options {
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    justify-content: space-around;
+    align-items: center;
+  }
+  #center_me {
+    margin-top: 1rem;
+  }
+  #research {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    width: 70%;
+  }
+  #search_input {
+    width: 95%;
+    margin-top: 1rem;
+  }
+  #search_button {
+    margin-top: 1rem;
+  }
 </style>

@@ -18,6 +18,7 @@ import { RouterLink, RouterView } from 'vue-router'
   <RouterView />
 </template>
 
+
 <style scoped>
 body {
   margin: 0;
