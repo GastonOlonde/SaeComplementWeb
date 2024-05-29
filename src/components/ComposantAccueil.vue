@@ -34,6 +34,7 @@
     margin: 1rem;
     padding: 5rem;
     border: 1px solid black;
+    font-size: 2rem;
     border-radius: 5px;
     background-color: lightgrey;
     text-decoration: none;

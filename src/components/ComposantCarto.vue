@@ -19,6 +19,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import axios from 'axios';
+import { icon } from 'leaflet';
 
 export default {
   setup() {
@@ -45,14 +46,15 @@ export default {
     });
 
     onMounted(() => {
-      map.value = L.map('map').setView([48.8534, 2.3488], 12);
+      map.value = L.map('map').setView([49.8710245, 2.2639386], 12);
+      map.marker = L.marker([49.8710245, 2.2639386], {icon: userIcon}).addTo(map.value);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
       }).addTo(map.value);
 
       markers.value = L.markerClusterGroup({
-        disableClusteringAtZoom: 20,
+        disableClusteringAtZoom: 50,
         maxClusterRadius: 70,
       });
       map.value.addLayer(markers.value);
