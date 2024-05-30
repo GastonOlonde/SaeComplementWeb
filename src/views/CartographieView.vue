@@ -1,7 +1,7 @@
 <template>
   <div id="carto">
     <ComposantCarto />
-    <ComposantRecupPosition />
+    <!-- <ComposantRecupPosition /> -->
   </div>
 </template>
 
@@ -11,12 +11,13 @@ import ComposantRecupPosition from '@/components/ComposantRecupPosition.vue';
 </script>
 <style>
   #carto{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* justify-content: center; */
     align-items: center;
     margin-left: auto;
+    /* padding: 1rem 0 1rem 1rem; */
     height: 100vh;
-    width: 85%;
+    width: 100%;
   }
 </style>

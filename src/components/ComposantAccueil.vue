@@ -39,13 +39,17 @@
     background-color: lightgrey;
     text-decoration: none;
     color: black;
+    transition: all 0.5s ease-in-out;
   }
   #lien:hover{
     background-color: grey;
+    transform: scale(1.01);
   }
   
   .bottom{
     width: 95%;
     text-align: center;
+    background-image: url('../../public/back-carto.png');
+    background-size: cover;
   }
 </style>

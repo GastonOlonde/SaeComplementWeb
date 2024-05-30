@@ -1,6 +1,5 @@
 <template>
   <div id="accueil">
-    <h1>Vous êtes sur la page d'Accueil</h1>
     <ComposantAccueil />
   </div>
 </template>
@@ -17,5 +16,6 @@
     margin-left: auto;
     height: 100vh;
     width: 85%;
+    transition: all 0.5s ease-in-out;
   }
 </style>

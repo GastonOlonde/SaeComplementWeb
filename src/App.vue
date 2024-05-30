@@ -5,6 +5,9 @@ import { RouterLink, RouterView } from 'vue-router'
 <template>
   
   <header>
+    <button id="hide" @click="toggleMenu">
+      <i id="fleche_cache" class="bi bi-arrow-left-circle-fill"></i>
+    </button>
     <div class="wrapper">
       <nav>
         <RouterLink to="/">Accueil</RouterLink>
@@ -18,6 +21,75 @@ import { RouterLink, RouterView } from 'vue-router'
   <RouterView />
 </template>
 
+<script>  
+  // cacher le header au bouton hide
+  const toggleMenu = () => {
+    const header = document.querySelector('header');
+    const hide = document.querySelector('#hide');
+    const accueil = document.querySelector('#accueil');
+    const donnees = document.querySelector('#donnees');
+    const geoloc = document.querySelector('#geoloc');
+    const divopt = document.querySelector('#div_options');
+
+
+    // récupérer la largueur du header
+    const headerWidth = header.offsetWidth;
+    // déplacer le header à gauche de la largeur du header avec animation
+    header.style.left = header.style.left === `-${headerWidth}px` ? `0px` : `-${headerWidth}px`;
+    // on tourne la flèche de 180° et on la décale de 1rem soit à gauche soit à droite
+    hide.style.transform = hide.style.transform === `rotate(180deg)` ? `rotate(0deg)` : `rotate(180deg)`;
+    // ajouter une autre animation scale sur le hide
+    hide.style.left = hide.style.left === `15rem` ? `10rem` : `15rem`;
+
+    const url = window.location.href;
+    const page = url.split('/').pop();
+
+    if(header.style.left === `-${headerWidth}px`){
+      // à partir de l'url on récupère le nom de la page
+      
+
+      switch(page){
+        case '':
+          accueil.style.width = `100%`;
+          break;
+        case 'geolocalisation':
+          geoloc.style.width = `100%`;
+          break;
+        case 'accueil':
+          accueil.style.width = `100%`;
+          break;
+        case 'donnees':
+          donnees.style.width = `100%`;
+          break;
+        case 'cartographie':
+          divopt.style.width = `80%`;
+          divopt.style.left = `10%`;
+          break;
+      }
+    }else{
+      switch(page){
+        case '':
+          accueil.style.width = `85%`;
+          break;
+        case 'geolocalisation':
+          geoloc.style.width = `85%`;
+          break;
+        case 'accueil':
+          accueil.style.width = `85%`;
+          break;
+        case 'donnees':
+          donnees.style.width = `85%`;
+          break;
+        case 'cartographie':
+          divopt.style.width = `75%`;
+          divopt.style.left = `20%`;
+          break;
+      }
+    }
+  
+  }
+
+</script>
 
 <style scoped>
 body {
@@ -29,15 +101,36 @@ body {
 }
 
 header {
+  position: absolute;
   line-height: 1.5;
-  position: fixed;
   top: 0;
   left: 0;
-  background-color: black;
+  background-color: rgba(0, 0, 0, 0.794);
   height: 100vh;
   width: auto; 
-  z-index: 1000;
+  z-index: 10000;
+  transition: all 0.5s ease-in-out; 
 }
+#hide{
+  position: relative;
+  top: 0.5rem;
+  left: 10rem;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.5s ease-in-out; 
+}
+
+#fleche_cache{
+  color: #107231;
+  margin-top: 0;
+  font-size: 3rem;
+  transition: all 0.5s ease-in-out;
+}
+#fleche_cache:hover{
+  color: #18a852;
+}
+
 
 .wrapper {
   height: 50%;

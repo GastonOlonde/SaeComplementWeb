@@ -1,14 +1,13 @@
 <template>
-  <h1>Cartographie</h1>
-  <div id="map"></div>
-  <div id="div_options">
-    <button id="center_me" @click="centerMap">Centrer sur moi</button>
-    <div id="research">
-      <input id="search_input" type="text" v-model="searchQuery" placeholder="Entrez une adresse ou des coordonnées">
-      <button id="search_button" @click="searchLocation">Rechercher</button>
+  <div id="map">
+    <div id="div_options">
+      <div id="research">
+        <button id="center_me" @click="centerMap">Centrer sur moi</button>
+        <input id="search_input" type="text" v-model="searchQuery" placeholder="Entrez une adresse ou des coordonnées">
+        <button id="search_button" @click="searchLocation">Rechercher</button>
+      </div>
     </div>
   </div>
-  
 </template>
 
 <script>
@@ -19,7 +18,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import axios from 'axios';
-import { icon } from 'leaflet';
+// import { icon } from 'leaflet';
 
 export default {
   setup() {
@@ -46,11 +45,11 @@ export default {
     });
 
     onMounted(() => {
-      map.value = L.map('map').setView([49.8710245, 2.2639386], 12);
-      map.marker = L.marker([49.8710245, 2.2639386], {icon: userIcon}).addTo(map.value);
+      map.value = L.map('map' , {zoomControl: false}).setView([49.8710245, 2.2639386], 12);
+      map.marker = L.marker([49.8710245, 2.2639386], {icon: userIcon}, 10).addTo(map.value);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map.value);
 
       markers.value = L.markerClusterGroup({
@@ -75,7 +74,7 @@ export default {
     });
 
     const centerMap = () => {
-      if (navigator.geolocation) {
+      if (navigator.geolocation)  {
         navigator.geolocation.getCurrentPosition((position) => {
           const { latitude, longitude } = position.coords;
           if (map.value) {
@@ -95,9 +94,11 @@ export default {
         }, (error) => {
           console.error(error);
         });
-      } else {
-        console.error('Geolocation is not supported by this browser.');
+      }else {
+        
       }
+      
+      
     };
 
     const clearMarkers = () => {
@@ -293,9 +294,13 @@ export default {
 
 <style scoped>
   #map {
-    height: 60vh;
-    width: 80%;
+    height: 100vh;
+    width: 100%;
     margin: 0 auto;
+  }
+
+  .leaflet-control-zoom .leaflet-bar .leaflet-control {
+    display: none !important;
   }
 
   button {
@@ -303,42 +308,48 @@ export default {
     background-color: #107231;
     color: white;
     border: none;
-    border-radius: 0.25rem;
+    border-radius: 50px;
+    height: 100%;
     cursor: pointer;
+    transition: all 0.5s ease-in-out;
   }
   button:hover {
-    background-color: #0d5f1f;
+    background-color: #18a852;
   }
 
   input {
     padding: 0.5rem;
     border: 1px solid #ccc;
-    border-radius: 0.25rem;
+    border-radius: 50px;
+    height: 100%;
   }
 
   #div_options {
-    display: flex;
-    flex-direction: row;
-    width: 80%;
-    justify-content: space-around;
-    align-items: center;
+    position: relative;
+    top: 1rem;
+    left: 20%;
+    width: 75%;
+    z-index: 1000;
+    transition: all 0.5s ease-in-out;
   }
-  #center_me {
-    margin-top: 1rem;
-  }
+
   #research {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
-    width: 70%;
+    height: 2.75rem;
+    width: 100%;
   }
   #search_input {
-    width: 95%;
-    margin-top: 1rem;
+    width: 70%;
   }
-  #search_button {
-    margin-top: 1rem;
+
+  @media (max-width: 775px) {
+    #div_options {
+      left: 20% !important;
+      width: 70% !important;
+    }
   }
 </style>

@@ -22,5 +22,6 @@ import ComposantGeo from '@/components/ComposantGeo.vue'
     height: 100vh;
     width: 85%;
     overflow-y: scroll;
+    transition: all 0.5s ease-in-out;
   }
 </style>
