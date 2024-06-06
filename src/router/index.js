@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AccueilView from '../views/AccueilView.vue'
-import GeolocalisationView from '@/views/GeolocalisationView.vue'
 import CartographieView from '@/views/CartographieView.vue'
-import DonneesView from '@/views/DonneesView.vue'
+import AproposView from '@/views/AproposView.vue'
 
 import NotFoundView from '@/views/NotFoundView.vue'
 
@@ -11,24 +9,20 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'accueil',
-      component: AccueilView
-    },
-    {
-      path: '/geolocalisation',
-      name: 'geolocalisation',
-      component: GeolocalisationView
-    },
-    {
       path: '/cartographie',
       name: 'cartographie',
-      component: CartographieView
+      component: CartographieView,
+      meta: {
+        title: "Cartographie - Carto\'S Search"
+      }
     },
     {
-      path:'/donnees',
-      name:'donnees',
-      component: DonneesView
+      path:'/apropos',
+      name:'apropos',
+      component: AproposView,
+      meta: {
+        title: "À propos - Carto\'S Search"
+      }
     },
     {
       path: '/:pathMatch(.*)*',
@@ -36,5 +30,10 @@ const router = createRouter({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  document.title = to.meta.title || 'Carto-S Search';
+  next();
+});
 
 export default router

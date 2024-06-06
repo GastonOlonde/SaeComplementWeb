@@ -54,7 +54,7 @@ export default {
 
       markers.value = L.markerClusterGroup({
         disableClusteringAtZoom: 50,
-        maxClusterRadius: 70,
+        maxClusterRadius: 50,
       });
       map.value.addLayer(markers.value);
 
@@ -304,17 +304,19 @@ export default {
   }
 
   button {
+    font-size: medium;
     padding: 0.5rem 1rem;
-    background-color: #107231;
+    background-color: #1a73e8;
     color: white;
     border: none;
     border-radius: 50px;
     height: 100%;
+    width: auto;
     cursor: pointer;
     transition: all 0.5s ease-in-out;
   }
   button:hover {
-    background-color: #18a852;
+    background-color: #478be3;
   }
 
   input {
@@ -344,7 +346,16 @@ export default {
   }
   #search_input {
     width: 70%;
+    font-size: medium;
+    background-color: rgb(241, 237, 237);
   }
+
+  @media (max-width: 1200px) {
+    button {
+      font-size: small;
+    }
+  }
+
 
   @media (max-width: 775px) {
     #div_options {

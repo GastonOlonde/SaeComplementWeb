@@ -10,10 +10,8 @@ import { RouterLink, RouterView } from 'vue-router'
     </button>
     <div class="wrapper">
       <nav>
-        <RouterLink to="/">Accueil</RouterLink>
-        <RouterLink to="/geolocalisation">Géolocalisation</RouterLink>
         <RouterLink to="/cartographie">Cartographie</RouterLink>
-        <RouterLink to="/donnees">Accéder aux données</RouterLink>
+        <RouterLink to="/apropos">À Propos</RouterLink>
       </nav>
     </div>
   </header>
@@ -26,10 +24,11 @@ import { RouterLink, RouterView } from 'vue-router'
   const toggleMenu = () => {
     const header = document.querySelector('header');
     const hide = document.querySelector('#hide');
-    const accueil = document.querySelector('#accueil');
-    const donnees = document.querySelector('#donnees');
-    const geoloc = document.querySelector('#geoloc');
+    // const accueil = document.querySelector('#accueil');
+    // const donnees = document.querySelector('#donnees');
+    // const geoloc = document.querySelector('#geoloc');
     const divopt = document.querySelector('#div_options');
+    const apropos = document.querySelector('#apropos');
 
 
     // récupérer la largueur du header
@@ -39,7 +38,7 @@ import { RouterLink, RouterView } from 'vue-router'
     // on tourne la flèche de 180° et on la décale de 1rem soit à gauche soit à droite
     hide.style.transform = hide.style.transform === `rotate(180deg)` ? `rotate(0deg)` : `rotate(180deg)`;
     // ajouter une autre animation scale sur le hide
-    hide.style.left = hide.style.left === `15rem` ? `10rem` : `15rem`;
+    hide.style.left = hide.style.left === `13.3rem` ? `10rem` : `13.3rem`;
 
     const url = window.location.href;
     const page = url.split('/').pop();
@@ -49,17 +48,8 @@ import { RouterLink, RouterView } from 'vue-router'
       
 
       switch(page){
-        case '':
-          accueil.style.width = `100%`;
-          break;
-        case 'geolocalisation':
-          geoloc.style.width = `100%`;
-          break;
-        case 'accueil':
-          accueil.style.width = `100%`;
-          break;
-        case 'donnees':
-          donnees.style.width = `100%`;
+        case 'apropos':
+          apropos.style.width = `100%`;
           break;
         case 'cartographie':
           divopt.style.width = `80%`;
@@ -68,17 +58,8 @@ import { RouterLink, RouterView } from 'vue-router'
       }
     }else{
       switch(page){
-        case '':
-          accueil.style.width = `85%`;
-          break;
-        case 'geolocalisation':
-          geoloc.style.width = `85%`;
-          break;
-        case 'accueil':
-          accueil.style.width = `85%`;
-          break;
-        case 'donnees':
-          donnees.style.width = `85%`;
+        case 'apropos':
+          apropos.style.width = `85%`;
           break;
         case 'cartographie':
           divopt.style.width = `75%`;
@@ -105,7 +86,7 @@ header {
   line-height: 1.5;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.794);
+  background-color: rgb(241, 237, 237);
   height: 100vh;
   width: auto; 
   z-index: 10000;
@@ -122,32 +103,32 @@ header {
 }
 
 #fleche_cache{
-  color: #107231;
+  color: #1a73e8;
   margin-top: 0;
   font-size: 3rem;
   transition: all 0.5s ease-in-out;
 }
 #fleche_cache:hover{
-  color: #18a852;
+  color: #478be3;
 }
 
 
 .wrapper {
   height: 50%;
-  margin: 22vh 1rem 0 1rem;
+  margin: 30vh 1rem 0 1rem;
 }
 
 nav {
   width: 100%;
-  height: 100%;
-  font-size: 1.2rem;
+  height: 50%;
+  font-size: 1.7rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 nav a.router-link-exact-active {
-  color: var(--color-text);
+  color: black;
 }
 nav a.router-link-exact-active:hover {
   background-color: transparent;
@@ -156,12 +137,12 @@ nav a.router-link-exact-active:hover {
 nav a {
   display: inline-block;
   padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+  border-left: 1px solid #1a73e8;
 }
 
-nav a:first-of-type {
+/* nav a:first-of-type {
   border: 0;
-}
+} */
 
 
 
