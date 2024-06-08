@@ -36,7 +36,7 @@
   align-items: start;
   margin-left: 0 auto;
   gap: 1rem;
-  padding: 2rem;
+  padding: 4rem;
 }
 
 h1 {

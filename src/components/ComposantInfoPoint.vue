@@ -1,0 +1,155 @@
+<template>
+  <div id="contenu_infopoint" v-for="marker in markers" :key="marker.id">
+    <button id="close_tab" @click="viderTabMarkers()">x</button>
+    <div id="tabs">
+      <button
+        v-for="(tab, index) in tabs"
+        :key="index"
+        :class="{ active: activeTab === index }"
+        @click="activeTab = index"
+      >
+        {{ tab }}
+      </button>
+    </div>
+    <div id="tab_content">
+      <div v-if="activeTab === 0">
+        <p v-for="line in marker.adresse.split(',')" :key="line">{{ line }}</p>
+      </div>
+      <div v-if="activeTab === 1">
+        <p> <box-icon type='solid' name='parking'></box-icon> {{ marker.capacite }}</p>
+        <p> <box-icon name='chair'></box-icon> {{ marker.mobilier }}</p>
+        <p> <box-icon name='universal-access' ></box-icon> {{ marker.acces }}</p>
+        <p> <box-icon name='euro'></box-icon> {{ marker.gratuit }}</p>
+        <p> <strong>Protection:</strong> {{ marker.protection }}</p>
+        <p> <strong>Couverture:</strong> {{ marker.couverture }}</p>
+        <p> <strong>Surveillance:</strong> {{ marker.surveillance }}</p>
+      </div>
+    </div>
+    <div id="itinary_div">
+      <button @click="sendItineraryRequest(marker)">Itinéraire</button>
+    </div>
+  </div>
+</template>
+
+<script>
+import eventBus from '../EventBus';
+import 'boxicons';
+
+export default {
+  data() {
+    return {
+      markers: [],
+      tabs: ['Adresse', 'Caractéristiques'],
+      activeTab: 0,
+    };
+  },
+  created() {
+    eventBus.on('markerAdded', (data) => {
+      this.markers = [];
+      this.markers.push(data);
+    });
+  },
+  methods: {
+    sendItineraryRequest(marker) {
+      eventBus.emit('requestItinerary', { lat: marker.lat, lng: marker.lng });
+    },
+    viderTabMarkers() {
+      this.markers = [];
+      eventBus.emit('removeItinerary');
+    }
+  }
+};
+</script>
+
+<style>
+#contenu_infopoint {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: start;
+  padding: 1rem;
+  color: black;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgb(123, 121, 121);
+  background-color: #f9f9f9;
+  margin-bottom: 1rem;
+  width: 300px;
+}
+
+#close_tab {
+  position: relative;
+  top: -30px;
+  left: 269px;
+  background-color: #1a73e8;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 15px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.5s ease-in-out;
+}
+
+#close_tab:hover {
+  background-color: #478be3;
+}
+
+#tabs {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+#tabs button {
+  flex: 1;
+  padding: 0.5rem;
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 5px 5px 0 0;
+  cursor: pointer;
+  transition: all 0.5s ease-in-out;
+}
+
+#tabs button.active {
+  background-color: #478be3;
+}
+
+#tabs button:not(.active):hover {
+  background-color: #5a9bf4;
+}
+
+#tab_content {
+  width: 100%;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 0 10px rgb(123, 121, 121);
+}
+
+#tab_content p {
+  margin: 0.2rem 0;
+}
+
+#itinary_div {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+button {
+  font-size: medium;
+  padding: 0.5rem 1rem;
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.5s ease-in-out;
+}
+
+button:hover {
+  background-color: #478be3;
+}
+</style>
