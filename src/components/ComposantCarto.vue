@@ -160,6 +160,10 @@ export default {
         marker.on('click', async (e) => {
           const { lat, lng } = e.latlng;
           const address = await getGeocodingData(lat, lng);
+          const loadingIndicator = document.getElementById('loading');
+          loadingIndicator.style.display = 'block';
+          // wait
+          
           const additionalData = {
             lat: lat,
             lng: lng,
@@ -172,7 +176,11 @@ export default {
             couverture: couverture,
             surveillance: surveillance
           };
+          setTimeout(() => {
+            loadingIndicator.style.display = 'none';
+          }, 300);
           EventBus.emit('markerAdded', additionalData);  // Émettre les données
+          
           // ouvrir le header
           const header = document.querySelector('header');
           header.style.left = '0';
@@ -286,15 +294,15 @@ export default {
 
             routeLayer.value = L.geoJSON(route).addTo(map.value);
             map.value.fitBounds(routeLayer.value.getBounds());
+            loadingIndicator.style.display = 'none';
           } catch (error) {
             console.error('Erreur lors de la récupération de l\'itinéraire:', error);
           }
         }, (error) => {
           console.error(error);
         });
-        loadingIndicator.style.display = 'none';
       } else {
-        loadingIndicator.style.display = 'none';
+        // loadingIndicator.style.display = 'none';
         console.error('Geolocation is not supported by this browser.');
       }
     };

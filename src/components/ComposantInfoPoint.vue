@@ -1,13 +1,9 @@
 <template>
-  <div id="contenu_infopoint" v-for="marker in markers" :key="marker.id">
+  <div id="contenu_infopoint" :class="{ 'fade-transition': isFading }" v-for="marker in markers" :key="marker.id">
     <button id="close_tab" @click="viderTabMarkers()">x</button>
     <div id="tabs">
-      <button
-        v-for="(tab, index) in tabs"
-        :key="index"
-        :class="{ active: activeTab === index }"
-        @click="activeTab = index"
-      >
+      <button v-for="(tab, index) in tabs" :key="index" :class="{ active: activeTab === index }"
+        @click="activeTab = index">
         {{ tab }}
       </button>
     </div>
@@ -18,7 +14,7 @@
       <div v-if="activeTab === 1">
         <p> <box-icon type='solid' name='parking'></box-icon> {{ marker.capacite }}</p>
         <p> <box-icon name='chair'></box-icon> {{ marker.mobilier }}</p>
-        <p> <box-icon name='universal-access' ></box-icon> {{ marker.acces }}</p>
+        <p> <box-icon name='universal-access'></box-icon> {{ marker.acces }}</p>
         <p> <box-icon name='euro'></box-icon> {{ marker.gratuit }}</p>
         <p> <strong>Protection:</strong> {{ marker.protection }}</p>
         <p> <strong>Couverture:</strong> {{ marker.couverture }}</p>
@@ -41,12 +37,16 @@ export default {
       markers: [],
       tabs: ['Adresse', 'Caractéristiques'],
       activeTab: 0,
+      isFading: false,
     };
   },
   created() {
     eventBus.on('markerAdded', (data) => {
-      this.markers = [];
-      this.markers.push(data);
+      this.fadeMarkers(() => {
+        this.markers = [];
+        this.markers.push(data);
+      });
+
     });
   },
   methods: {
@@ -54,9 +54,18 @@ export default {
       eventBus.emit('requestItinerary', { lat: marker.lat, lng: marker.lng });
     },
     viderTabMarkers() {
-      this.markers = [];
-      eventBus.emit('removeItinerary');
-    }
+      this.fadeMarkers(() => {
+        this.markers = [];
+        eventBus.emit('removeItinerary');
+      });
+    },
+    fadeMarkers(callback) {
+      this.isFading = true;
+      setTimeout(() => {
+        callback();
+        this.isFading = false;
+      }, 500);
+    },
   }
 };
 </script>
@@ -74,6 +83,12 @@ export default {
   background-color: #f9f9f9;
   margin-bottom: 1rem;
   width: 300px;
+  opacity: 1;
+  transition: all 0.5s ease-in-out;
+}
+
+#contenu_infopoint.fade-transition {
+  opacity: 0;
 }
 
 #close_tab {
