@@ -3,7 +3,7 @@
   <div id="map">
     <div id="div_options">
       <div id="research">
-        <button id="center_me" @click="centerMap">Centrer sur moi</button>
+        <button id="center_me" @click="centerMap">Centrer</button>
         <input id="search_input" type="text" v-model="searchQuery" placeholder="Entrez une adresse ou des coordonnées">
         <button id="search_button" @click="searchLocation">Rechercher</button>
       </div>
@@ -407,13 +407,13 @@ export default {
 }
 
 button {
-  font-size: medium;
-  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  padding: 0.7rem 1.2rem;
   background-color: #1a73e8;
   color: white;
   border: none;
   border-radius: 50px;
-  height: 100%;
+  height: auto;
   width: auto;
   cursor: pointer;
   transition: all 0.5s ease-in-out;
@@ -454,13 +454,6 @@ input {
   font-size: medium;
   background-color: rgb(241, 237, 237);
 }
-
-@media (max-width: 1200px) {
-  button {
-    font-size: small;
-  }
-}
-
 
 @media (max-width: 775px) {
   /* #div_options {
