@@ -4,7 +4,10 @@
     <div id="div_options">
       <div id="research">
         <button id="center_me" @click="centerMap">Centrer</button>
-        <input id="search_input" type="text" v-model="searchQuery" placeholder="Entrez une adresse ou des coordonnées">
+        <div id="search_cross_div">
+          <input id="search_input" type="text" v-model="searchQuery" placeholder="Entrez une adresse ou des coordonnées">
+          <button id="vide_searchBar">x</button>
+        </div>
         <button id="search_button" @click="searchLocation">Rechercher</button>
       </div>
     </div>
@@ -85,6 +88,18 @@ export default {
           map.value.removeLayer(routeLayer.value);
         }
       });
+
+      const searchInput = document.getElementById('search_input');
+      searchInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          searchLocation();
+        }
+      });
+
+      const videSearchBar = document.getElementById('vide_searchBar');
+      videSearchBar.addEventListener('click', () => {
+        viderSearchBar();
+      });
     });
 
     onBeforeUnmount(() => {
@@ -95,17 +110,21 @@ export default {
         map.value = null;
       }
     });
+    const showLoading = () => {
+      const loadingIndicator = document.getElementById('loading');
+      loadingIndicator.style.display = 'block';
+    };
+
+    const hideLoading = () => {
+      const loadingIndicator = document.getElementById('loading');
+      loadingIndicator.style.display = 'none';
+    };
+
+    const viderSearchBar = () => {
+      searchQuery.value = '';
+    };
 
     const centerMap = async () => {
-      const loadingIndicator = document.getElementById('loading');
-
-      const showLoading = () => {
-        loadingIndicator.style.display = 'block';
-      };
-
-      const hideLoading = () => {
-        loadingIndicator.style.display = 'none';
-      };
 
       const getGeolocation = () => {
         return new Promise((resolve, reject) => {
@@ -114,8 +133,8 @@ export default {
 
             const options = {
               enableHighAccuracy: true,
-              timeout: 5000, // Timeout after 5 seconds
-              maximumAge: 0 // Do not use a cached position
+              timeout: 5000,
+              maximumAge: 0 
             };
 
             navigator.geolocation.getCurrentPosition(resolve, reject, options);
@@ -162,8 +181,7 @@ export default {
           const address = await getGeocodingData(lat, lng);
           const loadingIndicator = document.getElementById('loading');
           loadingIndicator.style.display = 'block';
-          // wait
-          
+
           const additionalData = {
             lat: lat,
             lng: lng,
@@ -177,11 +195,10 @@ export default {
             surveillance: surveillance
           };
           setTimeout(() => {
-            loadingIndicator.style.display = 'none';
+            hideLoading();
           }, 300);
           EventBus.emit('markerAdded', additionalData);  // Émettre les données
-          
-          // ouvrir le header
+
           const header = document.querySelector('header');
           header.style.left = '0';
           const hide = document.querySelector('#hide');
@@ -302,7 +319,6 @@ export default {
           console.error(error);
         });
       } else {
-        // loadingIndicator.style.display = 'none';
         console.error('Geolocation is not supported by this browser.');
       }
     };
@@ -449,8 +465,26 @@ input {
   width: 100%;
 }
 
+#search_cross_div{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 2.75rem;
+  width: 100%;
+}
+
+#search_cross_div button {
+  position: relative;
+  left: -60px;
+  top: -2px;
+  font-size: 1.5rem;
+  background-color: transparent;
+  color: #1a73e8;
+}
+
 #search_input {
-  width: 70%;
+  width: 90%;
   font-size: medium;
   background-color: rgb(241, 237, 237);
 }

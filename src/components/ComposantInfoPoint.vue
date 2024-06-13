@@ -9,16 +9,36 @@
     </div>
     <div id="tab_content">
       <div v-if="activeTab === 0">
-        <p v-for="line in marker.adresse.split(',')" :key="line">{{ line }}</p>
+        <p v-for="line in marker.adresse.split(',')" :key="line">
+          {{ line }}
+        </p>
       </div>
-      <div v-if="activeTab === 1">
-        <p> <box-icon type='solid' name='parking'></box-icon> {{ marker.capacite }}</p>
-        <p> <box-icon name='chair'></box-icon> {{ marker.mobilier }}</p>
-        <p> <box-icon name='universal-access'></box-icon> {{ marker.acces }}</p>
-        <p> <box-icon name='euro'></box-icon> {{ marker.gratuit }}</p>
-        <p> <strong>Protection:</strong> {{ marker.protection }}</p>
-        <p> <strong>Couverture:</strong> {{ marker.couverture }}</p>
-        <p> <strong>Surveillance:</strong> {{ marker.surveillance }}</p>
+      <div v-if="activeTab === 1" id="div_info">
+        <p v-if="marker.capacite">
+          <img id="icon_info" src="../../public/infosPointIcon/parking.png">
+          <span id="info_point_span">{{ marker.capacite }}</span>
+          Places
+        </p>
+        <p v-if="marker.mobilier">
+          <img id="icon_info" src="../../public/infosPointIcon/arceau.png">
+          {{ marker.mobilier }}
+        </p>
+        <p v-if="marker.acces">
+          <img id="icon_info" src="../../public/infosPointIcon/prive.png">
+          {{ marker.acces }}
+        </p>
+        <p v-if="marker.gratuit">
+          <img id="icon_info" src="../../public/infosPointIcon/piece-en-euros.png">
+          {{ marker.gratuit === "true" ? 'Gratuit' : 'Payant' }}
+        </p>
+        <p v-if="marker.couverture">
+          <img id="icon_info" src="../../public/infosPointIcon/toit.png">
+          {{ marker.couverture === "true" ? 'Couvert' : 'Non couvert' }}
+        </p>
+        <p v-if="marker.surveillance">
+          <img id="icon_info" src="../../public/infosPointIcon/surveillance.png">
+          {{ marker.surveillance === "true" ? 'Surveillé' : 'Non surveillé' }}
+        </p>
       </div>
     </div>
     <div id="itinary_div">
@@ -37,16 +57,16 @@ export default {
       markers: [],
       tabs: ['Adresse', 'Caractéristiques'],
       activeTab: 0,
-      isFading: false,
+      isFading: false
     };
   },
   created() {
     eventBus.on('markerAdded', (data) => {
+      this.cleanMarkerData(data);
       this.fadeMarkers(() => {
         this.markers = [];
         this.markers.push(data);
       });
-
     });
   },
   methods: {
@@ -66,8 +86,23 @@ export default {
         this.isFading = false;
       }, 500);
     },
-  }
+    cleanMarkerData(marker) {
+      for (const key in marker) {
+        if (marker[key] === '' || marker[key] === 'nonprécisé' || marker[key] === 'AUTRE' || marker[key] === null) {
+          delete marker[key];
+        }
+        if(marker[key] !== null && marker[key] !== undefined && marker[key].length > 0 && key !== 'adresse') {
+          // mettre tout en minuscule
+          marker[key] = marker[key].toLowerCase();
+          // mettre la première lettre en majuscule
+          marker[key] = marker[key].charAt(0).toUpperCase() + marker[key].slice(1);
+        }
+        
+      }
+    }
+  },
 };
+
 </script>
 
 <style>
@@ -77,10 +112,11 @@ export default {
   justify-content: space-between;
   align-items: start;
   padding: 1rem;
-  color: black;
+  color: var(--color-text);
   border-radius: 10px;
-  box-shadow: 0 0 10px rgb(123, 121, 121);
-  background-color: #f9f9f9;
+  box-shadow: 0 0 10px #1a73e8a1;
+  background-color: var(--background-color);
+  border: 0.5px solid #1a73e8;
   margin-bottom: 1rem;
   width: 300px;
   opacity: 1;
@@ -118,7 +154,7 @@ export default {
 #tabs button {
   flex: 1;
   padding: 0.5rem;
-  background-color: #1a73e8;
+  background-color: #478be3;
   color: white;
   border: none;
   border-radius: 5px 5px 0 0;
@@ -127,7 +163,7 @@ export default {
 }
 
 #tabs button.active {
-  background-color: #478be3;
+  background-color: #1a73e8;
 }
 
 #tabs button:not(.active):hover {
@@ -137,9 +173,10 @@ export default {
 #tab_content {
   width: 100%;
   padding: 1rem;
-  background-color: white;
+  background-color: var(--background-color);
+  border: 0.5px solid #1a73e8;
   border-radius: 0 0 10px 10px;
-  box-shadow: 0 0 10px rgb(123, 121, 121);
+  box-shadow: 0 0 10px #1a73e8a1;
 }
 
 #tab_content p {
@@ -166,5 +203,38 @@ button {
 
 button:hover {
   background-color: #478be3;
+}
+
+#info_point_span {
+  color: #1a73e8;
+}
+
+#icon_info {
+  width: 40px;
+  background-color: #1a73e8;
+  padding: 2px;
+  border-radius: 15%;
+  color: white;
+}
+
+#icon_info_adresse {
+  width: 30px;
+  background-color: #1a73e8;
+  padding: 2px;
+  border-radius: 15%;
+  color: white;
+}
+
+#div_info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+#div_info p {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.4rem;
 }
 </style>

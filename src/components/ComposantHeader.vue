@@ -143,9 +143,11 @@ header {
   line-height: 1.5;
   top: 0;
   left: 0;
-  background-color: rgb(241, 237, 237);
+  background-color: var(--color-background);
   height: 100vh;
   width: auto;
+  border-right: 0.5px solid #1a73e8a1;
+  box-shadow: 0 0 15px 0 #1a73e8a1;
   z-index: 1000;
   transition: all 0.5s ease-in-out;
 }
@@ -173,7 +175,7 @@ header {
 
 .wrapper {
   height: 15vh;
-  margin: 5vh 1rem 0 1rem;
+  margin: 2vh 1rem 0 1rem;
   transition: all 0.5s ease-in-out;
 }
 
@@ -188,7 +190,8 @@ nav {
 }
 
 nav a.router-link-exact-active {
-  color: black;
+  color: var(--color-text);
+  background-color: #1a73e863;
 }
 
 nav a.router-link-exact-active:hover {
@@ -203,9 +206,9 @@ nav a {
 
 #dataCarto {
   padding: 1rem;
-  margin: 3rem 1rem 1rem 1rem;
-  height: 60vh;
-  overflow-y: hidden;
+  margin: 2rem 1rem 1rem 1rem;
+  height: 69vh;
+  overflow-y: scroll;
   transition: all 0.5s ease-in-out;
 }
 
