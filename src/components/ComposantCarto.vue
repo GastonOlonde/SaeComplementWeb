@@ -3,12 +3,15 @@
   <div id="map">
     <div id="div_options">
       <div id="research">
-        <button id="center_me" @click="centerMap">Centrer</button>
+        <button id="center_me" @click="centerMap">
+          <img src="../../public/broche-cible.png" alt="">
+        </button>
         <div id="search_cross_div">
-          <input id="search_input" type="text" v-model="searchQuery" placeholder="Entrez une adresse ou des coordonnées">
+          <input id="search_input" type="text" v-model="searchQuery"
+            placeholder="Entrez une adresse ou des coordonnées">
           <button id="vide_searchBar">x</button>
         </div>
-        <button id="search_button" @click="searchLocation">Rechercher</button>
+        <!-- <button id="search_button" @click="searchLocation">Rechercher</button> -->
       </div>
     </div>
   </div>
@@ -16,7 +19,7 @@
 
 <script>
 import { ref, onMounted, onBeforeUnmount, h } from 'vue';
-import L from 'leaflet';
+import L, { Icon } from 'leaflet';
 import 'leaflet.markercluster/dist/leaflet.markercluster';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
@@ -134,7 +137,7 @@ export default {
             const options = {
               enableHighAccuracy: true,
               timeout: 5000,
-              maximumAge: 0 
+              maximumAge: 0
             };
 
             navigator.geolocation.getCurrentPosition(resolve, reject, options);
@@ -327,7 +330,6 @@ export default {
       const query = searchQuery.value;
       if (!query) return;
 
-      // Check if the query is coordinates
       const coordRegex = /^[-+]?\d{1,2}\.\d+,\s*[-+]?\d{1,3}\.\d+$/;
       if (coordRegex.test(query)) {
         const [lat, lng] = query.split(',').map(Number);
@@ -342,7 +344,6 @@ export default {
           searchMarker.value.bindPopup(`${address}`).openPopup();
         }
       } else {
-        // Geocode the address
         const apiUrl = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(query)}&key=fb0f32f0d7984466b39ed240f169d182`;
         try {
           const response = await axios.get(apiUrl);
@@ -399,9 +400,7 @@ export default {
   z-index: 1000;
 
   border: 10px solid #f3f3f3;
-  /* Light grey */
   border-top: 10px solid #3498db;
-  /* Blue */
   border-radius: 50%;
   width: 100px;
   height: 100px;
@@ -439,9 +438,26 @@ button:hover {
   background-color: #478be3;
 }
 
+#center_me{
+  margin-right: 2.5rem;
+  padding: 2.5px ;
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  transition: all 0.5s ease-in-out;
+}
+#center_me img {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
 input {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
+  padding: 0.5rem 3rem 0.5rem 1rem;
+  border: 1px solid #1a73e8;
   border-radius: 50px;
   height: 100%;
 }
@@ -449,8 +465,6 @@ input {
 #div_options {
   position: relative;
   top: 1rem;
-  /* left: 20%;
-  width: 75%; */
   z-index: 1000;
   transition: all 0.5s ease-in-out;
 }
@@ -460,12 +474,11 @@ input {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
   height: 2.75rem;
   width: 100%;
 }
 
-#search_cross_div{
+#search_cross_div {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -476,23 +489,19 @@ input {
 
 #search_cross_div button {
   position: relative;
-  left: -60px;
-  top: -2px;
+  right: 3rem;
   font-size: 1.5rem;
+  padding: 0 0.5rem 0 1rem;
+  height: 2.7rem;
+  border-radius: 0;
+  border-left: 1px solid #1a73e8;
   background-color: transparent;
   color: #1a73e8;
 }
 
 #search_input {
-  width: 90%;
+  width: 100%;
   font-size: medium;
   background-color: rgb(241, 237, 237);
-}
-
-@media (max-width: 775px) {
-  /* #div_options {
-    left: 20% !important;
-    width: 70% !important;
-  } */
 }
 </style>
