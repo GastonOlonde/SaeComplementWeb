@@ -1,18 +1,22 @@
 <template>
   <div id="loading" class="bike-wheel-loader" style="display: none;"></div>
+  <div id="filter_blur"></div>
   <div id="map">
     <div id="div_options">
-      <div id="research">
-        <button id="center_me" @click="centerMap">
+      <div id="research">        
+        <button id="center_me" @click="centerMap" title="Centrer sur ma localisation">
           <img src="../../public/broche-cible.png" alt="">
         </button>
         <div id="search_cross_div">
           <input id="search_input" type="text" v-model="searchQuery"
             placeholder="Entrez une adresse ou des coordonnées">
-          <button id="vide_searchBar">x</button>
+          <button id="vide_searchBar" title="Effacer">x</button>
         </div>
         <!-- <button id="search_button" @click="searchLocation">Rechercher</button> -->
       </div>
+    </div>
+    <div id="hide_compo">
+      <ComposantApropos />
     </div>
   </div>
 </template>
@@ -26,9 +30,13 @@ import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import axios from 'axios';
 import EventBus from '../EventBus';
+import ComposantApropos from '@/components/ComposantApropos.vue';
 // import { icon } from 'leaflet';
 
 export default {
+  components: {
+    ComposantApropos
+  },
   setup() {
     const map = ref(null);
     const markers = ref(null);
@@ -390,6 +398,17 @@ export default {
   margin: 0 auto;
 }
 
+#filter_blur {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: none;
+}
+
 #loading {
   position: absolute;
   top: 45%;
@@ -503,5 +522,12 @@ input {
   width: 100%;
   font-size: medium;
   background-color: rgb(241, 237, 237);
+}
+
+#hide_compo {
+  display: none;
+  overflow: scroll;
+  width: auto;
+  margin: 0 auto;
 }
 </style>

@@ -1,12 +1,13 @@
 <template>
   <header>
-    <button id="hide" @click="toggleMenu">
+    <button id="hide" @click="toggleMenu" title="Fermer/Ouvrir">
       <i id="fleche_cache" class="bi bi-arrow-left-circle-fill"></i>
     </button>
     <div class="wrapper">
       <nav>
         <RouterLink to="/">Cartographie</RouterLink>
-        <RouterLink to="/apropos">À Propos</RouterLink>
+        <!-- <RouterLink to="/apropos">À Propos</RouterLink> -->
+        <a id="apropos_p" @click="showAPropos" >À propos</a>
       </nav>
     </div>
     <div id="dataCarto">
@@ -53,6 +54,35 @@ window.setInterval(() => {
 window.setInterval(() => {
   headerDimensions();
 }, 100);
+
+const showAPropos = () => {
+  const apropos = document.querySelector('#hide_compo');
+  const filter = document.querySelector('#filter_blur');
+  const contenu_apropos = document.querySelector('#contenu_apropos');
+  apropos.style.display = apropos.style.display === 'block' ? 'none' : 'block';
+  filter.style.display = filter.style.display === 'block' ? 'none' : 'block';
+
+  // si apropos est affiché, désactivation des interactions sur la carte
+  const map = document.querySelector('.leaflet-container');
+
+  const close_apropos = document.querySelector('#close_apropos');
+  close_apropos.addEventListener('click', () => {
+    apropos.style.display = 'none';
+    filter.style.display = 'none';
+  });
+
+  // activé le scroll sur le contenu de apropos
+  contenu_apropos.addEventListener('wheel', (e) => {
+    e.stopPropagation();
+  });
+
+  // si on clique en dehors de apropos, on le cache
+  filter.addEventListener('click', () => {
+    apropos.style.display = 'none';
+    filter.style.display = 'none';
+  });
+  
+}
 
 // cacher le header au bouton hide
 const toggleMenu = () => {
@@ -148,7 +178,7 @@ header {
   width: auto;
   border-right: 0.5px solid #1a73e8a1;
   box-shadow: 0 0 15px 0 #1a73e8a1;
-  z-index: 1000;
+  z-index: 10001;
   transition: all 0.5s ease-in-out;
 }
 
@@ -189,16 +219,19 @@ nav {
   transition: all 0.5s ease-in-out;
 }
 
-nav a.router-link-exact-active {
+nav a.router-link-exact-active,
+nav #apropos_btn.router-link-exact-active {
   color: var(--color-text);
   background-color: #1a73e863;
 }
 
-nav a.router-link-exact-active:hover {
+nav a.router-link-exact-active:hover,
+nav #apropos_p.router-link-exact-active:hover {
   background-color: transparent;
 }
 
-nav a {
+nav a,
+nav #apropos_p {
   display: inline-block;
   padding: 0 1rem;
   border-left: 1px solid #1a73e8;
