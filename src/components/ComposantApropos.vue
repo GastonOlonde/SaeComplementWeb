@@ -50,7 +50,8 @@
 #contenu_apropos {
   background: var(--color-background) ;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid #1a73e8a1;
+  box-shadow: 0 0 15px 0 #1a73e8a1;
   padding: 3rem;
   width: 60%;
   height: 80vh;
@@ -61,8 +62,12 @@
   z-index: 100000;
 }
 
-#contenu_apropos::-webkit-scrollbar {
+*::-webkit-scrollbar {
   display: none;
+}
+
+#contenu_apropos::-webkit-scrollbar {
+  display: block;
 }
 
 #contenu_apropos span {

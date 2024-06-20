@@ -14,6 +14,7 @@ import ComposantHeader from './components/ComposantHeader.vue';
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
     gap: 1rem;
   }
 </style>

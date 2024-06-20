@@ -404,10 +404,12 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgb(0, 0, 0, 0.5);
   z-index: 9999;
+  transition: all 0.5s ease-in-out;
   display: none;
 }
+
 
 #loading {
   position: absolute;
@@ -417,7 +419,6 @@ export default {
   background: transparent;
   padding: 10px;
   z-index: 1000;
-
   border: 10px solid #f3f3f3;
   border-top: 10px solid #3498db;
   border-radius: 50%;
@@ -461,7 +462,6 @@ button:hover {
   margin-right: 2.5rem;
   padding: 2.5px ;
   background-color: #1a73e8;
-  color: white;
   border: none;
   border-radius: 40px;
   cursor: pointer;
@@ -469,9 +469,15 @@ button:hover {
   justify-content: center;
   transition: all 0.5s ease-in-out;
 }
+#center_me:hover {
+  background-color: #478be3;
+  transform: scale(1.1);
+}
+
 #center_me img {
   width: 2.5rem;
   height: 2.5rem;
+  background-color: transparent;
 }
 
 input {
@@ -517,6 +523,9 @@ input {
   background-color: transparent;
   color: #1a73e8;
 }
+#search_cross_div button:hover {
+  color: #478be3;
+}
 
 #search_input {
   width: 100%;
@@ -526,8 +535,9 @@ input {
 
 #hide_compo {
   display: none;
-  overflow: scroll;
+  /* overflow: scroll; */
   width: auto;
-  margin: 0 auto;
+  margin-left: 10%;
+  transition: all 0.5s ease-in-out;
 }
 </style>

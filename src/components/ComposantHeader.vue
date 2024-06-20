@@ -1,5 +1,8 @@
 <template>
   <header>
+
+    <img id="logo_cartoSearch" src="../../public/logo_CartoSearch.png">
+
     <button id="hide" @click="toggleMenu" title="Fermer/Ouvrir">
       <i id="fleche_cache" class="bi bi-arrow-left-circle-fill"></i>
     </button>
@@ -7,7 +10,7 @@
       <nav>
         <RouterLink to="/">Cartographie</RouterLink>
         <!-- <RouterLink to="/apropos">À Propos</RouterLink> -->
-        <a id="apropos_p" @click="showAPropos" >À propos</a>
+        <a id="apropos_p" @click="showAPropos">À propos</a>
       </nav>
     </div>
     <div id="dataCarto">
@@ -23,6 +26,7 @@ import { RouterLink, RouterView } from 'vue-router';
 import ComposantInfoPoint from './ComposantInfoPoint.vue';
 import { h } from 'vue';
 
+
 // au chargement de la page (ondocumentload)
 function positionHide() {
   // récupérer la largueur du header
@@ -34,9 +38,9 @@ function positionHide() {
   // si le header est affiché
   if (header.style.left === `-${headerWidth}px`) {
     // déplacer le header à gauche de la largeur du header
-    hide.style.left = headerWidth  + 'px';
+    hide.style.left = headerWidth + 'px';
   } else {
-    hide.style.left = headerWidth - (hideWidth/2) + 'px';
+    hide.style.left = headerWidth - (hideWidth / 2) + 'px';
   }
 };
 
@@ -63,7 +67,7 @@ const showAPropos = () => {
   filter.style.display = filter.style.display === 'block' ? 'none' : 'block';
 
   // si apropos est affiché, désactivation des interactions sur la carte
-  const map = document.querySelector('.leaflet-container');
+  const map = document.querySelector('#map');
 
   const close_apropos = document.querySelector('#close_apropos');
   close_apropos.addEventListener('click', () => {
@@ -81,7 +85,7 @@ const showAPropos = () => {
     apropos.style.display = 'none';
     filter.style.display = 'none';
   });
-  
+
 }
 
 // cacher le header au bouton hide
@@ -103,9 +107,9 @@ const toggleMenu = () => {
   // si le header est affiché
   if (header.style.left === `-${headerWidth}px`) {
     // déplacer le header à gauche de la largeur du header
-    hide.style.left = headerWidth  + 'px';
+    hide.style.left = headerWidth + 'px';
   } else {
-    hide.style.left = headerWidth - (hideWidth/2) + 'px';
+    hide.style.left = headerWidth - (hideWidth / 2) + 'px';
   }
 
   headerDimensions();
@@ -114,7 +118,7 @@ const toggleMenu = () => {
 function headerDimensions() {
   const header = document.querySelector('header');
   const divopt = document.querySelector('#div_options');
-  const apropos = document.querySelector('#apropos');
+  const apropos = document.querySelector('#hide_compo');
   const headerWidth = header.offsetWidth;
 
 
@@ -138,6 +142,7 @@ function headerDimensions() {
         divopt.style.width = `80%`;
         divopt.style.left = `10%`;
         dataCarto.style.display = 'block';
+        apropos.style.marginLeft = `0`;
         break;
     }
   } else {
@@ -147,13 +152,15 @@ function headerDimensions() {
         dataCarto.style.display = 'none';
         break;
       case '':
-        divopt.style.width = largeurDispo -8+'%';
+        divopt.style.width = largeurDispo - 8 + '%';
         divopt.style.left = headerWidthPct + 5 + '%';
         dataCarto.style.display = 'block';
+        apropos.style.marginLeft = `10%`;
         break;
     }
   }
 }
+
 </script>
 
 
@@ -165,10 +172,11 @@ body {
   padding: 0;
   display: flex;
   flex-direction: row;
-  overflow: hidden;
 }
 
 header {
+  /* display: flex;
+  flex-direction: column; */
   position: absolute;
   line-height: 1.5;
   top: 0;
@@ -205,7 +213,7 @@ header {
 
 .wrapper {
   height: 15vh;
-  margin: 2vh 1rem 0 1rem;
+  margin: 12vh 1rem 0 1rem;
   transition: all 0.5s ease-in-out;
 }
 
@@ -240,7 +248,7 @@ nav #apropos_p {
 #dataCarto {
   padding: 1rem;
   margin: 2rem 1rem 1rem 1rem;
-  height: 69vh;
+  height: 55vh;
   overflow-y: scroll;
   transition: all 0.5s ease-in-out;
 }
@@ -248,4 +256,13 @@ nav #apropos_p {
 #dataCarto::-webkit-scrollbar {
   display: none;
 }
+
+#logo_cartoSearch {
+  position: absolute;
+  top: 2rem;
+  left: 30%;
+  width: 100px;
+  transition: all 0.3s ease-in-out;
+}
+
 </style>
