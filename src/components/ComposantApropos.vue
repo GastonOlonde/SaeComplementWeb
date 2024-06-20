@@ -67,7 +67,7 @@
 }
 
 #contenu_apropos::-webkit-scrollbar {
-  display: block;
+  display: none;
 }
 
 #contenu_apropos span {
