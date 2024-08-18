@@ -1,13 +1,17 @@
 
 ## DESCRIPTION
 
-- App Web en Vue.js
-- Permet de voir tous les parkings à vélo dans Amiens avec leur description.
-- Permet d'établir un itinéraire entre notre position actuelle et le point choisit.
-- Permet de faire des recherches par adresses ou par coordonnées.
-- D'un aspect plus technique, les points gps sont stockés dans une API Strapi. Des appels fréquents sont réalisés à l'API depuis l'app web pour récupérer ces points. Les points sont gérés et affichés par cluster permettant une plus grande fluidité.
+App Web en Vue.js
 
-  Sur mon site web "http://olonde.net/Gaston/" se trouve une démo de cette app.
+Cette application permet de voir tous les parkings à vélo dans Amiens avec leur description.
+
+Elle permet également d'établir un itinéraire entre notre position actuelle et le point choisi.
+
+Elle offre la possibilité de faire des recherches par adresses ou par coordonnées.
+
+D'un aspect plus technique, les points GPS sont stockés dans une API Strapi. Des appels fréquents sont réalisés à l'API depuis l'app web pour récupérer ces points. Les points sont gérés et affichés par cluster, permettant une plus grande fluidité.
+
+Une démo de cette application est disponible sur mon site web : http://olonde.net/Gaston/.
 
 
 
